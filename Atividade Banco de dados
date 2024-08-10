@@ -1,0 +1,6 @@
+-- Criar banco de dados bd_sistema_bancario
+create table bd_sistema_bancario
+with
+owner = postgres
+encoding = 'utf8'
+connection limite
