@@ -1,0 +1,41 @@
+-- Criar domínio para e-mail
+CREATE DOMAIN email_domain AS VARCHAR(100)
+    CONSTRAINT email_domain_format CHECK (VALUE ~* '^[^\s@]+@[^\s@]+\.[^\s@]+$');
+
+-- Criar domínio para preços
+CREATE DOMAIN preco_domain AS DECIMAL(10, 2)
+    CONSTRAINT preco_domain_positive CHECK (VALUE >= 0);
+
+-- Criar domínio para datas, com uma restrição opcional (por exemplo, data não pode ser anterior a 2000)
+CREATE DOMAIN data_pedido_domain AS DATE
+    CONSTRAINT data_pedido_valid CHECK (VALUE >= '2000-01-01');
+	
+-- Criação da tabela 'clientes'
+CREATE TABLE clientes (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email email_domain UNIQUE
+);
+
+-- Criação da tabela 'produtos'
+CREATE TABLE produtos (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    preco preco_domain NOT NULL
+);
+
+-- Criação da tabela 'pedidos'
+CREATE TABLE pedidos (
+    id SERIAL PRIMARY KEY,
+    cliente_id INTEGER REFERENCES clientes(id) ON DELETE CASCADE,
+    data data_pedido_domain NOT NULL
+);
+
+-- Criação da tabela 'itens_pedidos'
+CREATE TABLE itens_pedidos (
+    id SERIAL PRIMARY KEY,
+    pedido_id INTEGER REFERENCES pedidos(id) ON DELETE CASCADE,
+    produto_id INTEGER REFERENCES produtos(id),
+    quantidade INTEGER NOT NULL CHECK (quantidade > 0),
+    preco preco_domain NOT NULL
+);
