@@ -1,0 +1,119 @@
+---atividade 1----
+SELECT
+    f.nome AS nome_fornecedor,
+    f.cidade AS cidade_fornecedor
+FROM
+    tbl_estoque e
+    JOIN tbl_fornecedor f ON e.cod_fornecedor = f.cod_fornecedor
+WHERE
+    e.cod_peca = 1
+GROUP BY
+    f.nome,
+    f.cidade
+HAVING
+    SUM(e.quantidade) > 10;
+
+---atividade 2----
+CREATE TABLE tbl_pecas_disponiveis AS
+SELECT DISTINCT
+    p.nome AS nome_peca
+FROM
+    tbl_peca p
+    JOIN tbl_estoque e ON p.cod_peca = e.cod_peca
+WHERE
+    p.preco > 10
+    AND e.quantidade > 0;
+
+---atividade 3----
+CREATE TABLE tbl_pecas_sem_estoque AS
+SELECT
+    p.nome AS nome_peca
+FROM
+    tbl_peca p
+    LEFT JOIN tbl_estoque e ON p.cod_peca = e.cod_peca
+WHERE
+    e.cod_peca IS NULL OR e.quantidade = 0
+GROUP BY
+    p.nome;
+	
+---atividade4---
+CREATE TABLE tbl_pecas_com_estoque AS
+SELECT
+    p.nome AS nome_peca
+FROM
+    tbl_peca p
+    JOIN tbl_estoque e ON p.cod_peca = e.cod_peca
+WHERE
+    e.quantidade > 20
+GROUP BY
+    p.nome;
+
+---atividade5---
+CREATE TABLE tbl_pecas_exceto_placa AS
+SELECT
+    nome
+FROM
+    tbl_peca
+WHERE
+    nome <> 'PLACA'
+ORDER BY
+    nome;
+	
+---atividade6---
+CREATE TABLE tbl_pecas_fornecedor_C AS
+SELECT
+    p.nome AS nome_peca,
+    p.cor AS cor_peca
+FROM
+    tbl_peca p
+    JOIN tbl_estoque e ON p.cod_peca = e.cod_peca
+    JOIN tbl_fornecedor f ON e.cod_fornecedor = f.cod_fornecedor
+WHERE
+    f.nome = 'C'
+ORDER BY
+    p.nome;
+	
+---atividade7---
+CREATE TABLE tbl_pecas_londres AS
+SELECT
+    nome AS nome_peca,
+    cor AS cor_peca
+FROM
+    tbl_peca
+WHERE
+    cidade = 'LONDRES'
+ORDER BY
+    nome;
+
+---atividade7---
+CREATE TABLE tbl_pecas_londres AS
+SELECT
+    nome AS nome_peca,
+    cor AS cor_peca
+FROM
+    tbl_peca
+WHERE
+    cidade = 'LONDRES'
+ORDER BY
+    nome;
+---atividade8---
+CREATE TABLE tbl_pecas_estoque_londres_nao_paris AS
+SELECT
+    p.nome AS nome_peca
+FROM
+    tbl_peca p
+    JOIN tbl_estoque e ON p.cod_peca = e.cod_peca
+    JOIN tbl_fornecedor f ON e.cod_fornecedor = f.cod_fornecedor
+WHERE
+    f.cidade = 'LONDRES'
+    AND p.cod_peca NOT IN (
+        SELECT
+            e2.cod_peca
+        FROM
+            tbl_estoque e2
+            JOIN tbl_fornecedor f2 ON e2.cod_fornecedor = f2.cod_fornecedor
+        WHERE
+            f2.cidade = 'PARIS'
+    )
+GROUP BY
+    p.nome;
