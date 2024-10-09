@@ -4,3 +4,113 @@ with
 owner = postgres
 encoding = 'utf8'
 connection limite
+
+-- Criar 5 tabelas quaisquer
+CREATE TABLE clientes (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    telefone VARCHAR(20),
+    endereco TEXT
+);
+
+CREATE TABLE agencia (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    telefone VARCHAR(20),
+    endereco TEXT
+);
+
+CREATE TABLE produtos (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    descricao TEXT,
+    preco DECIMAL(10, 2) NOT NULL,
+    categoria_id INTEGER REFERENCES categorias(id),
+    fornecedor_id INTEGER REFERENCES fornecedores(id)
+);
+
+CREATE TABLE pedidos (
+    id SERIAL PRIMARY KEY,
+    cliente_id INTEGER REFERENCES clientes(id),
+    data_pedido TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    total DECIMAL(10, 2) NOT NULL
+);
+
+CREATE TABLE categorias (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL
+);
+
+ Criar tabelas conforme MER (Sistema Bancario)
+CREATE TABLE clientes (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    cpf VARCHAR(11) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    telefone VARCHAR(20),
+    endereco TEXT
+);
+
+CREATE TABLE agencias (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    endereco TEXT NOT NULL,
+    telefone VARCHAR(20)
+);
+
+CREATE TABLE contas (
+    id SERIAL PRIMARY KEY,
+    numero_conta VARCHAR(20) UNIQUE NOT NULL,
+    tipo_conta VARCHAR(20) NOT NULL,  -- Ex: Corrente, Poupança
+    saldo DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    cliente_id INTEGER REFERENCES clientes(id),
+    agencia_id INTEGER REFERENCES agencias(id),
+    data_abertura TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE transacoes (
+    id SERIAL PRIMARY KEY,
+    conta_id INTEGER REFERENCES contas(id),
+    tipo_transacao VARCHAR(20) NOT NULL,  -- Ex: Depósito, Saque, Transferência
+    valor DECIMAL(10, 2) NOT NULL,
+    data_transacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE funcionarios (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    cpf VARCHAR(11) UNIQUE NOT NULL,
+    cargo VARCHAR(50) NOT NULL,
+    agencia_id INTEGER REFERENCES agencias(id)
+);
+
+
+-- Deletar as 5 tabelas criadas aleatoriamente
+DROP TABLE IF EXISTS produtos;
+DROP TABLE IF EXISTS clientes;
+DROP TABLE IF EXISTS categorias;
+DROP TABLE IF EXISTS agencia;
+DROP TABLE IF EXISTS pedidos;
+
+-- alterar as tabelas conforme o MER atualizado
+ALTER TABLE clientes
+ADD COLUMN cpf VARCHAR(11) UNIQUE NOT NULL;
+
+ALTER TABLE contas
+ADD COLUMN tipo_conta VARCHAR(20) NOT NULL,
+ADD COLUMN saldo DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+ADD COLUMN data_abertura TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE transacoes
+ADD COLUMN tipo_transacao VARCHAR(20) NOT NULL;
+
+ALTER TABLE funcionarios
+ADD COLUMN cargo VARCHAR(50) NOT NULL;
+
+ALTER TABLE agencias
+ADD COLUMN telefone VARCHAR(20);
+
+-- Criar um esquema com o seu nome
+CREATE SCHEMA Nicolas;
