@@ -1,37 +1,80 @@
--- Criar 5 tabelas quaisquer
-CREATE TABLE clientes (
-    id SERIAL PRIMARY KEY,
+-- criar banco de dados bd_aula03
+CREATE DATABASE bd_aula03;
+
+- criar tabelas do MER 
+CREATE TABLE Aluno (
+    id_aluno INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    telefone VARCHAR(20),
-    endereco TEXT
+    data_nascimento DATE
 );
 
-CREATE TABLE agencia (
-    id SERIAL PRIMARY KEY,
+CREATE TABLE Curso (
+    id_curso INT PRIMARY KEY AUTO_INCREMENT,
+    nome_curso VARCHAR(100) NOT NULL,
+    duracao INT NOT NULL
+);
+
+CREATE TABLE Matricula (
+    id_matricula INT PRIMARY KEY AUTO_INCREMENT,
+    id_aluno INT,
+    id_curso INT,
+    data_matricula DATE,
+    FOREIGN KEY (id_aluno) REFERENCES Aluno(id_aluno),
+    FOREIGN KEY (id_curso) REFERENCES Curso(id_curso)
+);
+
+-- criar domains
+CREATE DOMAIN nome_domain AS VARCHAR(100)
+    CHECK (VALUE IS NOT NULL AND VALUE <> '');
+
+CREATE DOMAIN data_nascimento_domain AS DATE
+    CHECK (VALUE < CURRENT_DATE);
+
+CREATE DOMAIN duracao_domain AS INT
+    CHECK (VALUE > 0);
+
+CREATE DOMAIN data_matricula_domain AS DATE
+    CHECK (VALUE <= CURRENT_DATE);
+
+-- adicionar domain a tabela
+CREATE DOMAIN nome_domain AS VARCHAR(100)
+    CHECK (VALUE IS NOT NULL AND VALUE <> '');
+
+ALTER TABLE Aluno
+    ADD COLUMN nome_temp nome_domain;
+
+UPDATE Aluno
+SET nome_temp = nome;
+
+ALTER TABLE Aluno
+    DROP COLUMN nome;
+
+ALTER TABLE Aluno
+    RENAME COLUMN nome_temp TO nome;
+
+-- adicionar chaves estrangeiras
+-- Criar tabela Aluno
+CREATE TABLE Aluno (
+    id_aluno INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    telefone VARCHAR(20),
-    endereco TEXT
+    data_nascimento DATE
 );
 
-CREATE TABLE produtos (
-    id SERIAL PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    descricao TEXT,
-    preco DECIMAL(10, 2) NOT NULL,
-    categoria_id INTEGER REFERENCES categorias(id),
-    fornecedor_id INTEGER REFERENCES fornecedores(id)
+-- Criar tabela Curso
+CREATE TABLE Curso (
+    id_curso INT PRIMARY KEY AUTO_INCREMENT,
+    nome_curso VARCHAR(100) NOT NULL,
+    duracao INT NOT NULL
 );
 
-CREATE TABLE pedidos (
-    id SERIAL PRIMARY KEY,
-    cliente_id INTEGER REFERENCES clientes(id),
-    data_pedido TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    total DECIMAL(10, 2) NOT NULL
+-- Criar tabela Matricula
+CREATE TABLE Matricula (
+    id_matricula INT PRIMARY KEY AUTO_INCREMENT,
+    id_aluno INT,
+    id_curso INT,
+    data_matricula DATE,
+    FOREIGN KEY (id_aluno) REFERENCES Aluno(id_aluno) ON DELETE CASCADE,
+    FOREIGN KEY (id_curso) REFERENCES Curso(id_curso) ON DELETE CASCADE
 );
 
-CREATE TABLE categorias (
-    id SERIAL PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL
-);
+
